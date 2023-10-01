@@ -22,15 +22,15 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     // Check for the read only lock for the client_id
     @Override
     public String fetchElementRead(int l, int client_id) {
-        boolean readLockObtained = checkReadLock(client_id, l);
-
-        if (readLockObtained) {
+        if (checkReadLock(client_id, l)) {
             return strArray[l];
         } else {
             throw new RuntimeException("No read Only Lock");
         }
     }
 
+    // Check Read Lock on element for client_id
+    // return true if lock is there
     private boolean checkReadLock(int client_id, int l) {
 
         List<Integer> clientList;
@@ -41,12 +41,22 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         return false;
     }
 
-    private boolean checkWriteLock(int element) {
-        if(writeLockMap.get(element) != null) {
+    // Check Read Lock on element 
+    // return true if lock is there
+    private boolean checkReadLock(int element) {
+        if(readLockMap.get(element) != null && !readLockMap.get(element).isEmpty())
             return true;
-        } else {
+        else
             return false;
+    }
+
+    // Check Read Lock on element 
+    // return true if lock is there
+    private boolean checkWriteLock(int element) {
+        if (writeLockMap.get(element) != null) {
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -57,28 +67,39 @@ public class RemoteStringArrayServer implements RemoteStringArray {
 
     @Override
     public void insertArrayElement(int l, String str) {
+        // TODO - add the checks here
         strArray[l] = str;
     }
 
+    // Release any read or write lock on the element for that Id
     @Override
     public void releaseLock(int l, int client_id) {
-        // TODO Auto-generated method stub
+
+        try {
+            if (writeLockMap.get(l) != l && writeLockMap.get(l) == client_id) {
+                writeLockMap.remove(l);
+            }
+            if(readLockMap.get(l) != null) {
+                readLockMap.get(l).remove(client_id);
+            }
+        } catch (RuntimeException e) {
+
+        }
 
     }
 
     @Override
     public boolean requestReadLock(int l, int client_id) {
         try {
-            // If write lock is there then no lock
+            // If write lock is there then no read lock
             if (!checkWriteLock(l) && !checkReadLock(client_id, l)) {
-            // TODO - What to return if lock is already present
+            // TODO - What to return if lock is already present for that client_id
             if (!readLockMap.containsKey(l)) {
                 readLockMap.put(l, Arrays.asList(client_id));
                 return true;
             } else {
                 readLockMap.get(l).add(client_id);
             }
-
             return true;
         }
             
@@ -89,9 +110,13 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         return false;
     }
 
+    // Assing the write lock to client_id
     @Override
     public boolean requestWriteLock(int l, int client_id) {
-        // TODO Auto-generated method stub
+        if(!checkReadLock(l) & !checkWriteLock(l)) {
+            writeLockMap.put(l, client_id);
+            return true;
+        }
         return false;
     }
 
