@@ -1,11 +1,18 @@
+package assignment.adcs;
+
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+
+
 public class StringArrayClient {
 
     private int client_id;
-    private RemoteStringArray stringArrayServer;
+    private static RemoteStringArray stringArrayServer;
     Map<Integer, String> localStringArrayMapping;
     String PRINT_STATEMENT = "Select an Option: \n" +
             "1. Get Array Capacity\n" +
@@ -24,7 +31,7 @@ public class StringArrayClient {
         localStringArrayMapping = new HashMap<>();
     }
 
-    public int getArrayCapacity() {
+    public int getArrayCapacity() throws RemoteException {
         return stringArrayServer.size();
     }
 
@@ -72,7 +79,7 @@ public class StringArrayClient {
         return null;
     }
 
-    public String writeBack(int l) {
+    public String writeBack(int l) throws RemoteException {
         if (stringArrayServer.writeBackElement(localStringArrayMapping.get(l), l, client_id))
             return "Success";
         else
@@ -80,13 +87,20 @@ public class StringArrayClient {
 
     }
 
-    public void releaseLock(int l) {
+    public void releaseLock(int l) throws RemoteException {
         stringArrayServer.releaseLock(l, client_id);
         localStringArrayMapping.remove(l);
     }
 
-    public void releaseLock() {
-        localStringArrayMapping.keySet().forEach(l -> stringArrayServer.releaseLock(l, client_id));
+    public void releaseLock(){
+        localStringArrayMapping.keySet().forEach(l -> {
+            try {
+                stringArrayServer.releaseLock(l, client_id);
+            } catch (RemoteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
         localStringArrayMapping.clear();
     }
 
@@ -95,7 +109,8 @@ public class StringArrayClient {
         while (true) {
             try {
                 System.out.println(PRINT_STATEMENT);
-                switch (scanner.nextInt()) {
+                int choice = scanner.nextInt();
+                switch (choice) {
                     case 1: {
                         // Get Array Capacity
                         System.out.println("Capacity of Array: " + getArrayCapacity());
@@ -161,8 +176,6 @@ public class StringArrayClient {
                         break;
                 }
             } catch (Exception e) {
-                // TODO: handle exception
-            } finally {
                 scanner.close();
             }
         }
@@ -171,10 +184,16 @@ public class StringArrayClient {
 
     // Local testing without RMI
     public static void main(String[] args) {
-
-        StringArrayClient client = new StringArrayClient(26);
-        client.console();
-
+        try {
+            Registry registry = LocateRegistry.getRegistry(null);
+            stringArrayServer = (RemoteStringArray) registry.lookup("RemoteStringArray");
+            StringArrayClient client = new StringArrayClient(26);
+            client.console();
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+      
     }
 
 }

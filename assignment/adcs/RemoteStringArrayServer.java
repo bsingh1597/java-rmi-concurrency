@@ -1,3 +1,7 @@
+package assignment.adcs;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -160,6 +164,23 @@ public class RemoteStringArrayServer implements RemoteStringArray {
             return true;
         }
         return false;
+    }
+
+    public static void main(String[] args) {
+        try {
+            RemoteStringArrayServer server = new RemoteStringArrayServer(10);
+            server.insertArrayElement(0, "bipul");
+            server.insertArrayElement(4, "singh");
+            RemoteStringArray stub = (RemoteStringArray) UnicastRemoteObject.exportObject(server, 0);
+
+            // Bind the remote object's stub in the registry
+            Registry registry = LocateRegistry.getRegistry();
+            registry.rebind("RemoteStringArray", stub);
+            System.out.println("Server has Started....");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

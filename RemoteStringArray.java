@@ -13,8 +13,12 @@ public interface RemoteStringArray extends Remote {
 
     String fetchElementRead(int l, int client_id) throws RemoteException;
 
-    String fetchElementWrite(int l, int client_id);
+    String fetchElementWrite(int l, int client_id) throws RemoteException;
 
     boolean writeBackElement (String str, int l, int client_id);
+
+    public void releaseReadLock(int l, int client_id);
+
+    public int size();
 
 }
