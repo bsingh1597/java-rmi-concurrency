@@ -1,4 +1,5 @@
 package assignment.adcs;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -33,16 +34,14 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     }
 
     @Override
-    public String fetchElementRead(int l, int client_id) {
+    public String fetchElementRead(int l, int client_id) throws RemoteException {
         // If read lock is not present add lock if possible
         // Write lock can read elements
         if (requestReadLock(l, client_id) || checkWriteLock(client_id, l)) {
             return strArray[l];
+        } else {
+             throw new RemoteException("Read Lock Not Obtained");
         }
-        // } else {
-        //     throw new RuntimeException("No read Only Lock");
-        // }
-        return null;
     }
 
     // Check Read Lock on element for client_id
@@ -84,11 +83,12 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     }
 
     @Override
-    public String fetchElementWrite(int l, int client_id) {
+    public String fetchElementWrite(int l, int client_id) throws RemoteException {
         if(requestWriteLock(l, client_id)) {
             return strArray[l];
+        } else {
+            throw new RemoteException("Write Lock not Obtained");
         }
-        return null;
     }
 
     @Override
@@ -140,7 +140,10 @@ public class RemoteStringArrayServer implements RemoteStringArray {
                     readLockMap.put(l, Arrays.asList(client_id));
                     return true;
                 } else {
-                    readLockMap.get(l).add(client_id);
+                    // readLockMap.get(l).add(client_id);
+                    List<Integer> clientList = readLockMap.get(l);
+                    clientList.add(client_id);
+                    readLockMap.put(l, clientList);
                 }
                 return true;
             }
@@ -181,6 +184,18 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // Testing
+    @Override
+    public String getAllReadLocks() throws RemoteException {
+        return readLockMap.toString();
+    }
+
+    // Testing
+    @Override
+    public String getAllWriteLocks() throws RemoteException {
+        return writeLockMap.toString();
     }
 
 }
