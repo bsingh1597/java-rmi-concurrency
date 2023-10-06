@@ -208,6 +208,8 @@ public class StringArrayClient {
 
                 }
             } catch (Exception e) {
+                // Release all locks
+                releaseLock();
                 scanner.close();
             }
             System.out.println("***************------------*****************");
