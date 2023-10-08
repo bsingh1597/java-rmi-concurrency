@@ -221,9 +221,14 @@ public class StringArrayClient {
     // Local testing without RMI
     public static void main(String[] args) {
         try {
-            Registry registry = LocateRegistry.getRegistry(null);
-            stringArrayServer = (RemoteStringArray) registry.lookup("RemoteStringArray");
-            StringArrayClient client = new StringArrayClient(27);
+            List<String> configFile = Files.readAllLines(Paths.get(args[0]));
+            String host = configFile.get(0);
+            int port = Integer.parseInt(configFile.get(1));
+            String bindName = configFile.get(2);
+            String client_id = configFile.get(3);
+            Registry registry = LocateRegistry.getRegistry(host, port);
+            stringArrayServer = (RemoteStringArray) registry.lookup(bindName);
+            StringArrayClient client = new StringArrayClient(client_id);
             client.console();
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
