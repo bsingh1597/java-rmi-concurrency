@@ -128,7 +128,7 @@ public class StringArrayClient {
         System.out.println(PRINT_STATEMENT);
         while (true) {
             try {
-                System.out.print("\nRMI CLI >$ : ")
+                System.out.print("\nRMI CLI >$ : ");
                 Thread.sleep(500);
                 int choice = scanner.nextInt();
                 switch (choice) {
