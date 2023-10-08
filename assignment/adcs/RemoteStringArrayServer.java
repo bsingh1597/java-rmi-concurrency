@@ -196,7 +196,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
             RemoteStringArray stub = (RemoteStringArray) UnicastRemoteObject.exportObject(server, 0);
 
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", port);
             registry.rebind(bindName, stub);
             System.out.println("Server has Started....");
 
