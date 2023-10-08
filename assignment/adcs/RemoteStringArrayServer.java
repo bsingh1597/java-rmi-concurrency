@@ -184,6 +184,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
             // the port number of the registry (if not using the standard registry
             // port)
             List<String> configFile = Files.readAllLines(Paths.get(args[0]));
+            String host = configFile.get(3);
             int port = 9100;
             String bindName = configFile.get(0);
             int capacity = Integer.parseInt(configFile.get(1));
@@ -196,7 +197,8 @@ public class RemoteStringArrayServer implements RemoteStringArray {
             RemoteStringArray stub = (RemoteStringArray) UnicastRemoteObject.exportObject(server, 0);
 
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", port);
+            System.setProperty("java.rmi.server.hostname", host);
+            Registry registry = LocateRegistry.getRegistry(host, port);
             registry.rebind(bindName, stub);
             System.out.println("Server has Started....");
 
