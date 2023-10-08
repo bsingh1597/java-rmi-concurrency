@@ -8,6 +8,7 @@ import java.rmi.registry.Registry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -227,7 +228,7 @@ public class StringArrayClient {
             String host = configFile.get(0);
             int port = Integer.parseInt(configFile.get(1));
             String bindName = configFile.get(2);
-            String client_id = Integer.parseInt(configFile.get(3));
+            int client_id = Integer.parseInt(configFile.get(3));
             Registry registry = LocateRegistry.getRegistry(host, port);
             stringArrayServer = (RemoteStringArray) registry.lookup(bindName);
             StringArrayClient client = new StringArrayClient(client_id);
