@@ -125,20 +125,21 @@ public class StringArrayClient {
 
     private void console() {
         Scanner scanner = new Scanner(System.in);
+        System.out.println(PRINT_STATEMENT);
         while (true) {
             try {
-                System.out.println(PRINT_STATEMENT);
-                Thread.sleep(1000);
+                System.out.print("\nRMI CLI >$ : ")
+                Thread.sleep(500);
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1: {
                         // Get Array Capacity
-                        System.out.println("Capacity of Array: " + getArrayCapacity());
+                        System.out.print("Capacity of Array: " + getArrayCapacity());
                     }
                         break;
                     case 2: {
                         // Fetch Element Read
-                        System.out.println("Provide index of the element to fetch: ");
+                        System.out.print("Provide index of the element to fetch: ");
                         int l = scanner.nextInt();
                         // Decrement elementId because the frst element in array is 0
                         l--;
@@ -147,7 +148,7 @@ public class StringArrayClient {
                         break;
                     case 3: {
                         // Fetch Element Write
-                        System.out.println("Provide index of the element to fetch: ");
+                        System.out.print("Provide index of the element to fetch: ");
                         int l = scanner.nextInt();
                         l--;
                         System.out.println(fetchElementWrite(l));
@@ -155,7 +156,7 @@ public class StringArrayClient {
                         break;
                     case 4: {
                         // Print Element from the Local Map
-                        System.out.println("Provide index of the element to print: ");
+                        System.out.print("Provide index of the element to print: ");
                         int l = scanner.nextInt();
                         l--;
                         System.out.println(localStringArrayMapping.get(l));
@@ -164,10 +165,10 @@ public class StringArrayClient {
                         break;
                     case 5: {
                         // Concatenate Str to l element
-                        System.out.println("Provide index of the element to concatenate: ");
+                        System.out.print("Provide index of the element to concatenate: ");
                         int l = scanner.nextInt();
                         l--;
-                        System.out.println("Enter the string to Concatenate: ");
+                        System.out.print("Enter the string to Concatenate: ");
                         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                         String conStr = in.readLine();
                         System.out.println(concatenate(l, conStr));
@@ -175,7 +176,7 @@ public class StringArrayClient {
                         break;
                     case 6: {
                         // Write back Element
-                        System.out.println("Provide index of the element to write back: ");
+                        System.out.print("Provide index of the element to write back: ");
                         int l = scanner.nextInt();
                         l--;
                        System.out.println(writeBack(l));
@@ -183,7 +184,7 @@ public class StringArrayClient {
                         break;
                     case 7: {
                         // Release Lock
-                        System.out.println("Provide index of the element to write back: ");
+                        System.out.print("Provide index of the element to write back: ");
                         int l = scanner.nextInt();
                         l--;
                         releaseLock(l);
@@ -203,7 +204,7 @@ public class StringArrayClient {
                         return;
                     }
                     default:
-                        System.out.println("Choose correct Option");
+                        System.out.println("error: invalid choice");
                         break;
 
                 }
