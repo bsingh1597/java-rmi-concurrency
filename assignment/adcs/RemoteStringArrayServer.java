@@ -7,12 +7,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteStringArrayServer implements RemoteStringArray {
 
     String[] strArray;
-    Map<Integer, List<Integer>> readLockMap = new HashMap<>();
-    Map<Integer, Integer> writeLockMap = new HashMap<>();
+    ConcurrentHashMap<Integer, List<Integer>> readLockMap = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Integer, Integer> writeLockMap = new ConcurrentHashMap<>();
 
     public RemoteStringArrayServer(int n) {
         strArray = new String[n];
@@ -71,6 +72,8 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     }
 
     private boolean checkWriteLock(int client_id, int element) {
+        if (!writeLockMap.containsKey(element))
+            writeLockMap.put(element, client_id);
         return checkWriteLock(element) && client_id == writeLockMap.get(element);
     }
 
