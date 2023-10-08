@@ -1,3 +1,4 @@
 RemoteStringArray
 10
 Apple Banana Cocunut Peach Grapes Orange
+127.0.0.1
