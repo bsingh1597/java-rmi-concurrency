@@ -22,4 +22,8 @@ public interface RemoteStringArray extends Remote {
 
     public int size() throws RemoteException;
 
+    public String getAllReadLocks() throws RemoteException;
+
+    public String getAllWriteLocks() throws RemoteException;
+
 }

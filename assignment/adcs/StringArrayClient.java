@@ -1,5 +1,7 @@
 package assignment.adcs;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -22,7 +24,9 @@ public class StringArrayClient {
             "5. Cancatenate Element \n" +
             "6. Writeback Element \n" +
             "7. Release lock \n"+
-            "8. Exit";
+            "8. Get All Read Lock from Server\n"+
+            "9. Get All Write Lock from Server\n" +
+            "10. Exit";
     private String SUCCESS = "Success";
     private String FAILURE = "Failure";
 
@@ -40,29 +44,25 @@ public class StringArrayClient {
         // Check if the element is present the local map
         try {
             readStr = stringArrayServer.fetchElementRead(l, client_id);
-            if (readStr != null) {
-                localStringArrayMapping.put(l, readStr);
-                return SUCCESS;
-            }
+            localStringArrayMapping.put(l, readStr);
+            return SUCCESS;
         } catch (Exception e) {
             System.err.println("Error while Read fetching: " + e.getMessage());
+            return FAILURE;
         }
-        return FAILURE;
-
     }
 
     public String fetchElementWrite(int l) {
         String writeStr = null;
         try {
             writeStr = stringArrayServer.fetchElementWrite(l, client_id);
-            if (writeStr != null) {
-                    localStringArrayMapping.put(l, writeStr);
-                    return SUCCESS;
-                }
+            localStringArrayMapping.put(l, writeStr);
+            return SUCCESS;
         } catch (Exception e) {
             System.err.println("Error while Write fetching: " + e.getMessage());
+            return FAILURE;
         }
-        return FAILURE;
+        
     }
 
     // Expected that the element is fetched either in read or write mode
@@ -75,8 +75,10 @@ public class StringArrayClient {
             String newString = localStringArrayMapping.get(l).concat(concStr);
             localStringArrayMapping.put(l, newString);
             return newString;
+        } else {
+            localStringArrayMapping.put(l, concStr);
+            return concStr;
         }
-        return null;
     }
 
     public String writeBack(int l) throws RemoteException {
@@ -97,11 +99,28 @@ public class StringArrayClient {
             try {
                 stringArrayServer.releaseLock(l, client_id);
             } catch (RemoteException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         });
         localStringArrayMapping.clear();
+    }
+
+    public String getAllReadLocksAllClients() {
+        try {
+            return stringArrayServer.getAllReadLocks();
+        } catch (RemoteException e) {
+           e.printStackTrace();
+           return "ERROR";
+        }
+    }
+
+    public String getAllWriteLocksAllClients() {
+        try {
+            return stringArrayServer.getAllWriteLocks();
+        } catch (RemoteException e) {
+           e.printStackTrace();
+           return "ERROR";
+        }
     }
 
     private void console() {
@@ -109,6 +128,7 @@ public class StringArrayClient {
         while (true) {
             try {
                 System.out.println(PRINT_STATEMENT);
+                Thread.sleep(1000);
                 int choice = scanner.nextInt();
                 switch (choice) {
                     case 1: {
@@ -147,7 +167,9 @@ public class StringArrayClient {
                         System.out.println("Provide index of the element to concatenate: ");
                         int l = scanner.nextInt();
                         l--;
-                        String conStr = scanner.nextLine();
+                        System.out.println("Enter the string to Concatenate: ");
+                        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+                        String conStr = in.readLine();
                         System.out.println(concatenate(l, conStr));
                     }
                         break;
@@ -159,25 +181,38 @@ public class StringArrayClient {
                        System.out.println(writeBack(l));
                     }
                         break;
-                    case 7:
+                    case 7: {
                         // Release Lock
                         System.out.println("Provide index of the element to write back: ");
                         int l = scanner.nextInt();
                         l--;
                         releaseLock(l);
+                    }
                         break;  
-                    case 8:
+                    case 8: {
+                        System.out.println(getAllReadLocksAllClients());
+                    }
+                        break;
+                    case 9: {
+                        System.out.println(getAllWriteLocksAllClients());
+                    }
+                        break;
+                    case 10: {
                         releaseLock();
                         System.out.println("All the lock of this Client released");
                         return;
-
+                    }
                     default:
                         System.out.println("Choose correct Option");
                         break;
+
                 }
             } catch (Exception e) {
+                // Release all locks
+                releaseLock();
                 scanner.close();
             }
+            System.out.println("***************------------*****************");
         }
 
     }
@@ -187,7 +222,7 @@ public class StringArrayClient {
         try {
             Registry registry = LocateRegistry.getRegistry(null);
             stringArrayServer = (RemoteStringArray) registry.lookup("RemoteStringArray");
-            StringArrayClient client = new StringArrayClient(26);
+            StringArrayClient client = new StringArrayClient(27);
             client.console();
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
