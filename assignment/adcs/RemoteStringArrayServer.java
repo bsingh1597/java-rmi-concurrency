@@ -177,29 +177,22 @@ public class RemoteStringArrayServer implements RemoteStringArray {
 
     public static void main(String[] args) {
         try {
-		// NameServerMain nameServer = new NameServerMain();
-		// int id = Integer.parseInt(configFile.get(0));
-		// int listeningPort = Integer.parseInt(configFile.get(1));
-		// String serverIP = configFile.get(2).split(" ")[0];
-		// int serverPort = Integer.parseInt(configFile.get(2).split(" ")[1]);
-		// String input = "";
-		// String bootstrapIP = "";
-		// int bootstrapPort = 0;
-//         Bind name (the name associated with the remote object)
-// Capacity of the array
-// List of strings needed to initialize the array
-// Any other configuration parameters your implementation needs such as
-// the port number of the registry (if not using the standard registry
-// port)
+            // Bind name (the name associated with the remote object)
+            // Capacity of the array
+            // List of strings needed to initialize the array
+            // Any other configuration parameters your implementation needs such as
+            // the port number of the registry (if not using the standard registry
+            // port)
             List<String> configFile = Files.readAllLines(Paths.get(args[0]));
-            int capacity = Integer.parseInt(configFile.get(1));
+            int port = 9100;
             String bindName = configFile.get(0);
-            
-            RemoteStringArrayServer server = new RemoteStringArrayServer(capacity);
+            int capacity = Integer.parseInt(configFile.get(1));
             String[] arrayElements = configFile.get(2).split(" ");
+            RemoteStringArrayServer server = new RemoteStringArrayServer(capacity);
+            
             for(int i = 0; i<arrayElements.length; i++)
                 server.insertArrayElement(i, arrayElements[i]);
-                            
+
             RemoteStringArray stub = (RemoteStringArray) UnicastRemoteObject.exportObject(server, 0);
 
             // Bind the remote object's stub in the registry

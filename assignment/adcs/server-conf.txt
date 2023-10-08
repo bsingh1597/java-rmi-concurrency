@@ -1,0 +1,3 @@
+RemoteStringArray
+10
+Apple Banana Cocunut Peach Grapes Orange
