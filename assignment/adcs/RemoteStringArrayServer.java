@@ -130,7 +130,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         try {
             if (readLockMap.get(l) != null) {
                 List<Integer> clientList = readLockMap.get(l);
-                clientList.remove(client_id);
+                clientList.remove(Integer.valueOf(client_id));
                 readLockMap.put(l, clientList);
             }
         } catch (RuntimeException e) {
