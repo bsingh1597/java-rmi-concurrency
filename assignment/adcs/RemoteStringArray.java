@@ -10,7 +10,7 @@ public interface RemoteStringArray extends Remote {
     
     public boolean requestWriteLock(int l, int client_id) throws RemoteException;
 
-    public void releaseLock(int l, int client_id) throws RemoteException;
+    public boolean releaseLock(int l, int client_id) throws RemoteException;
 
     public String fetchElementRead(int l, int client_id) throws RemoteException;
 

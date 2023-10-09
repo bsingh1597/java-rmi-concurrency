@@ -93,7 +93,10 @@ public class StringArrayClient {
     }
 
     public void releaseLock(int l) throws RemoteException {
-        stringArrayServer.releaseLock(l, client_id);
+        if(stringArrayServer.releaseLock(l, client_id))
+	    System.out.println("Locks released for " + l + "th index");
+	else 
+	    System.out.println("error: Locks release failed for " + l + "th index");
         localStringArrayMapping.remove(l);
     }
 

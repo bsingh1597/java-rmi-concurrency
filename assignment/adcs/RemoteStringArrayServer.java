@@ -103,21 +103,25 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     // Release any read or write lock on the element for that Id
     // Only client having lock will call it
     @Override
-    public void releaseLock(int l, int client_id) {
-
+    public boolean releaseLock(int l, int client_id) {
+	System.out.println("Release lock for client " + client_id);
+        
         try {
-            if (writeLockMap.get(l) != l && writeLockMap.get(l) == client_id) {
+            if (writeLockMap.get(l) != null && writeLockMap.get(l) == client_id) {
                 writeLockMap.remove(l);
-            }
-            if (readLockMap.get(l) != null) {
+		System.out.println("In release writelock");
+            } 
+            if (readLockMap.get(l) != null && !readLockMap.get(l).isEmpty()) {
                 List<Integer> clientList = readLockMap.get(l);
-                clientList.remove(client_id);
+                clientList.remove(Integer.valueOf(client_id));
                 readLockMap.put(l, clientList);
-            }
+                System.out.println(readLockMap.get(l));
+            } 
+	    return true;
         } catch (RuntimeException e) {
-
+		e.printStackTrace();
         }
-
+        return false;
     }
 
     @Override

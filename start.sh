@@ -10,9 +10,11 @@ jdk-17.0.5/bin/javac -d target assignment/adcs/RemoteStringArray.java assignment
 
 #start the rmiregistry
 cd target
-../jdk-17.0.5/bin/rmiregistry &
+../jdk-17.0.5/bin/rmiregistry 9100 &
 cd ../
 
+sleep 5
+
 #run code
-jdk-17.0.5/bin/java  -classpath target assignment.adcs.RemoteStringArrayServer 2>&1
+jdk-17.0.5/bin/java  -classpath target assignment.adcs.RemoteStringArrayServer assignment/adcs/server-conf.txt  2>&1
 
