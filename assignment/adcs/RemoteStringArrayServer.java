@@ -1,14 +1,16 @@
 package assignment.adcs;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.lang.Thread;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class RemoteStringArrayServer implements RemoteStringArray {
 
@@ -73,6 +75,8 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     }
 
     private boolean checkWriteLock(int client_id, int element) {
+        if (!writeLockMap.containsKey(element))
+            writeLockMap.put(element, client_id);
         return checkWriteLock(element) && client_id == writeLockMap.get(element);
     }
 
@@ -107,12 +111,12 @@ public class RemoteStringArrayServer implements RemoteStringArray {
 
         try {
             if (writeLockMap.get(l) != l && writeLockMap.get(l) == client_id) {
+                System.out.print(readLockMap);
                 writeLockMap.remove(l);
             }
             if (readLockMap.get(l) != null) {
-                List<Integer> clientList = readLockMap.get(l);
-                clientList.remove(client_id);
-                readLockMap.put(l, clientList);
+                System.out.print(readLockMap);
+                readLockMap.get(l).remove(client_id);
             }
         } catch (RuntimeException e) {
 
@@ -125,9 +129,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
 
         try {
             if (readLockMap.get(l) != null) {
-                List<Integer> clientList = readLockMap.get(l);
-                clientList.remove(client_id);
-                readLockMap.put(l, clientList);
+                readLockMap.get(l).remove(client_id);
             }
         } catch (RuntimeException e) {
 
@@ -143,7 +145,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
                 return true;
             } else if (!checkWriteLock(l)) {
                 if (!readLockMap.containsKey(l)) {
-                    readLockMap.put(l, new ArrayList<>(Arrays.asList(client_id)));
+                    readLockMap.put(l, Arrays.asList(client_id));
                     return true;
                 } else {
                     // readLockMap.get(l).add(client_id);
