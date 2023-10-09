@@ -190,7 +190,7 @@ public class StringArrayClient {
                         break;
                     case 7: {
                         // Release Lock
-                        System.out.print("Provide index of the element to write back: ");
+                        System.out.print("Provide index of the element to release: ");
                         int l = scanner.nextInt();
                         l--;
                         releaseLock(l);

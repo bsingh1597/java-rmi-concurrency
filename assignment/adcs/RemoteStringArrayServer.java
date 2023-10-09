@@ -171,8 +171,8 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         if (checkWriteLock(client_id, l))
             return true;
         // Release readLock by this client on that element. If there
-        releaseReadLock(l, client_id);
-        if (!checkReadLock(l) & !checkWriteLock(l)) {
+        releaseReadLock(l, client_id); //not needed to release read lock once u provide writelock to the same client
+        if (!checkReadLock(l) && !checkWriteLock(l)) {
             writeLockMap.put(l, client_id);
             return true;
         }
