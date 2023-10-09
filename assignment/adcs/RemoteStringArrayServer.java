@@ -143,7 +143,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
                 return true;
             } else if (!checkWriteLock(l)) {
                 if (!readLockMap.containsKey(l)) {
-                    readLockMap.put(l, Arrays.asList(client_id));
+                    readLockMap.put(l, new ArrayList<>(Arrays.asList(client_id)));
                     return true;
                 } else {
                     // readLockMap.get(l).add(client_id);
