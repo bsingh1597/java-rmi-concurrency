@@ -110,7 +110,9 @@ public class RemoteStringArrayServer implements RemoteStringArray {
                 writeLockMap.remove(l);
             }
             if (readLockMap.get(l) != null) {
-                readLockMap.get(l).remove(client_id);
+                List<Integer> clientList = readLockMap.get(l);
+                clientList.remove(client_id);
+                readLockMap.put(l, clientList);
             }
         } catch (RuntimeException e) {
 
@@ -123,7 +125,9 @@ public class RemoteStringArrayServer implements RemoteStringArray {
 
         try {
             if (readLockMap.get(l) != null) {
-                readLockMap.get(l).remove(client_id);
+                List<Integer> clientList = readLockMap.get(l);
+                clientList.remove(client_id);
+                readLockMap.put(l, clientList);
             }
         } catch (RuntimeException e) {
 
