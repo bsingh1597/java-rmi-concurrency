@@ -89,7 +89,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         if(requestWriteLock(l, client_id)) {
             return strArray[l];
         } else {
-            throw new RemoteException("Write Lock not Obtained");
+            return "Write Lock not Obtained";
         }
     }
 
@@ -134,7 +134,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
                 readLockMap.put(l, clientList);
             }
         } catch (RuntimeException e) {
-
+            e.printStackTrace();
         }
 
     }
