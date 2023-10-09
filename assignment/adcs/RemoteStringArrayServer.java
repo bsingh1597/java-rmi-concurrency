@@ -1,17 +1,14 @@
 package assignment.adcs;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.lang.Thread;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RemoteStringArrayServer implements RemoteStringArray {
 
@@ -76,8 +73,6 @@ public class RemoteStringArrayServer implements RemoteStringArray {
     }
 
     private boolean checkWriteLock(int client_id, int element) {
-        if (!writeLockMap.containsKey(element))
-            writeLockMap.put(element, client_id);
         return checkWriteLock(element) && client_id == writeLockMap.get(element);
     }
 
