@@ -42,7 +42,7 @@ public class RemoteStringArrayServer implements RemoteStringArray {
         if (requestReadLock(l, client_id) || checkWriteLock(client_id, l)) {
             return strArray[l];
         } else {
-             throw new RemoteException("Read Lock Not Obtained");
+             return "Read Lock Not Obtained";
         }
     }
 
