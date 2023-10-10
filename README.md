@@ -1,8 +1,8 @@
 # java-rmi-concurrency
 
 ##Team Members
-Soumya Bharadwaj
-Bipul Singh
+<br>Soumya Bharadwaj
+<br>Bipul Singh
 
 ### Compile
 javac -d target assignment/adcs/RemoteStringArray.java assignment/adcs/RemoteStringArrayServer.java assignment/adcs/StringArrayClient.java
